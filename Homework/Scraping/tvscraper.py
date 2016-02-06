@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Name: Mainah
+# Name: Mainah Folkers
 # Student number: 10535845
 '''
 This script scrapes IMDB and outputs a CSV file with highest ranking tv series.
@@ -7,12 +7,11 @@ This script scrapes IMDB and outputs a CSV file with highest ranking tv series.
 # IF YOU WANT TO TEST YOUR ATTEMPT, RUN THE test-tvscraper.py SCRIPT.
 import csv
 
-from pattern.web import URL, DOM
+from pattern.web import URL, DOM, encode_utf8
 
 TARGET_URL = "http://www.imdb.com/search/title?num_votes=5000,&sort=user_rating,desc&start=1&title_type=tv_series"
 BACKUP_HTML = 'tvseries.html'
 OUTPUT_CSV = 'tvseries.csv'
-
 
 def extract_tvseries(dom):
     '''
@@ -26,13 +25,37 @@ def extract_tvseries(dom):
     - Runtime (only a number!)
     '''
 
-    # ADD YOUR CODE HERE TO EXTRACT THE ABOVE INFORMATION ABOUT THE
-    # HIGHEST RANKING TV-SERIES
-    # NOTE: FOR THIS EXERCISE YOU ARE ALLOWED (BUT NOT REQUIRED) TO IGNORE
-    # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT.
+    tvseries = []
 
-    return []  # replace this line as well as appropriate
+    # iterates over top 50 IMBD tv series
+    for tvserie in dom.by_tag("td.title")[:50]:
+        tvserie_array = []
+        # tv serie title is encoded and added to tv serie array
+        for title in tvserie.by_tag("a")[:1]:
+            tvserie_array.append(encode_utf8(title.content))
+        # tv serie ranking is encoded and added to tv serie array
+        for ranking in tvserie.by_tag("span.value")[:1]:
+            tvserie_array.append(encode_utf8(ranking.content))
+        # tv serie genres are added to tv serie array
+        for genres in tvserie.by_tag("span.genre")[:1]:
+            genres_array = []
+            # genre is encoded and added to genres array
+            for genre in genres.by_tag("a"):
+                genres_array.append(encode_utf8(genre.content))
+            tvserie_array.append(genres_array)
+        # tv serie actors are added to tv serie array
+        for actors in tvserie.by_tag("span.credit")[:1]:
+            actors_array = []
+            # actor is encoded and added to actors array
+            for actor in actors.by_tag("a"):
+                actors_array.append(encode_utf8(actor.content))
+            tvserie_array.append(actors_array)
+        # tv serie runtime is encoded and added to tv serie array
+        for runtime in tvserie.by_tag("span.runtime")[:1]:
+            tvserie_array.append(encode_utf8(runtime.content))
+        tvseries.append(tvserie_array)
 
+    return tvseries
 
 def save_csv(f, tvseries):
     '''
@@ -41,7 +64,10 @@ def save_csv(f, tvseries):
     writer = csv.writer(f)
     writer.writerow(['Title', 'Ranking', 'Genre', 'Actors', 'Runtime'])
 
-    # ADD SOME CODE OF YOURSELF HERE TO WRITE THE TV-SERIES TO DISK
+    # iterates over tv series
+    for tvserie in tvseries:
+        # and writes them one by one to csv file
+        writer.writerow(tvserie)
 
 if __name__ == '__main__':
     # Download the HTML file
