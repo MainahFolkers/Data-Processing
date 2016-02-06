@@ -1,3 +1,0 @@
-5. What is a so called “branch” in Git terms and why would you use it?
-	A branch is a parallel version of the main line of development in the repository, or the default branch (usually master).
-	You should use braches to experiment with new ideas, fix bugs without losing the orginial status of your project.
