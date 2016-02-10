@@ -12,6 +12,7 @@ from pattern.web import URL, DOM, encode_utf8
 TARGET_URL = "http://www.imdb.com/search/title?num_votes=5000,&sort=user_rating,desc&start=1&title_type=tv_series"
 BACKUP_HTML = 'tvseries.html'
 OUTPUT_CSV = 'tvseries.csv'
+COMMA = ','
 
 def extract_tvseries(dom):
     '''
@@ -30,31 +31,32 @@ def extract_tvseries(dom):
     # iterates over top 50 IMBD tv series
     for tvserie in dom.by_tag("td.title")[:50]:
         tvserie_array = []
+        genres_array = []
+        actors_array = []
         # tv serie title is encoded and added to tv serie array
-        for title in tvserie.by_tag("a")[:1]:
-            tvserie_array.append(encode_utf8(title.content))
+        title = tvserie("a")[0].content
+        tvserie_array.append(encode_utf8(title))
         # tv serie ranking is encoded and added to tv serie array
-        for ranking in tvserie.by_tag("span.value")[:1]:
-            tvserie_array.append(encode_utf8(ranking.content))
+        ranking = tvserie("span.value")[0].content
+        tvserie_array.append(encode_utf8(ranking))
         # tv serie genres are added to tv serie array
-        for genres in tvserie.by_tag("span.genre")[:1]:
-            genres_array = []
+        for genres in tvserie("span.genre a"):
             # genre is encoded and added to genres array
-            for genre in genres.by_tag("a"):
-                genres_array.append(encode_utf8(genre.content))
-            tvserie_array.append(genres_array)
+            genres_array.append(encode_utf8(genres.content))
+        # seprates genres with commas
+        genres = COMMA.join(genres_array)
+        tvserie_array.append(genres)
         # tv serie actors are added to tv serie array
-        for actors in tvserie.by_tag("span.credit")[:1]:
-            actors_array = []
+        for actors in tvserie("span.credit a"):
             # actor is encoded and added to actors array
-            for actor in actors.by_tag("a"):
-                actors_array.append(encode_utf8(actor.content))
-            tvserie_array.append(actors_array)
-        # tv serie runtime is encoded, stripped to numbers and added to tv serie array
-        for runtime in tvserie.by_tag("span.runtime")[:1]:
-            encode_utf8(runtime.content)
-            runtime = runtime.content.rstrip(' mins.')
-            tvserie_array.append(runtime)
+            actors_array.append(encode_utf8(actors.content))
+        # seprates actors with commas
+        actors = COMMA.join(actors_array)
+        tvserie_array.append(actors)
+        # tv serie runtime is encoded and stripped to numbers
+        runtime = encode_utf8(tvserie("span.runtime")[0].content)
+        runtime = runtime.rstrip(' mins.')
+        tvserie_array.append(runtime)
         tvseries.append(tvserie_array)
 
     return tvseries
