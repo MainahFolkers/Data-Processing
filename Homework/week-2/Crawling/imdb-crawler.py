@@ -245,32 +245,40 @@ def scrape_movie_page(dom):
     actors_array = []
 
     title = dom('div#ratingWidget strong')[0].content
+
     year = dom('span#titleYear a')[0].content
+
     try:
         duration = dom('div.txt-block time')[0].content
         # extract minutes in numbers from duration time
         duration = duration.rstrip(' min')
     # if no duration time is listed an empty string will be added
     except IndexError: duration = ''
+
     for genres in dom('div[itemprop="genre"] a'):
         genre = genres.content
         genre = genre.strip(' ')
         genres_array.append(genre)
     # seprates genres with semicolons
     genres = SEMICOLON.join(genres_array)
+
     for directors in dom('span[itemprop="director"] span[itemprop="name"]'):
         directors_array.append(directors.content)
     # seprates directors with semicolons
     directors = SEMICOLON.join(directors_array)
+
     for writers in dom('div.credit_summary_item span[itemprop="creator"] span[itemprop="name"]'):
         writers_array.append(writers.content)
     # seprates writers with semicolons
     writers = SEMICOLON.join(writers_array)
+
     for actors in dom('span[itemprop="actors"] span[itemprop="name"]')[:3]:
         actors_array.append(actors.content)
     # seprates actors with semicolons
     actors = SEMICOLON.join(actors_array)
+
     rating = dom('span[itemprop="ratingValue"]')[0].content
+
     for n_ratings in dom('span[itemprop="ratingCount"]'):
         n_ratings = n_ratings.content
         # removes commas from number of ratings
