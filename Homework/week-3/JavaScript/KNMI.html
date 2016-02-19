@@ -368,58 +368,8 @@
         2015/12/30;69
         2015/12/31;78
     </textarea>
-    // textarea ergens anders in de browser plaatsen
     <body>
-        <canvas id="canvas"></canvas>
-        // script aanroepen vanuit losse bestanden met src = ...github.com?
-        <script>
-            var data = document.getElementById("rawdata").innerHTML;
-            data = data.split("\n");
-
-            // constantes van makes of andere notatie gebruiken
-            var firstday = 1420066800000
-            var lastday = 1451516400000
-
-            var x = [];
-            var y = [];
-
-            var canvas = document.getElementById("canvas");
-            var ctx = canvas.getContext("2d");
-            canvas.width  = window.innerWidth-100;
-            canvas.height = window.innerHeight-100;
-
-            var xAxis = createTransform([firstday, lastday],[100, canvas.width]);
-            var yAxis = createTransform([-50,300],[canvas.height - 100, 0]);
-
-            // is deze regel nodig?
-            //ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.font = "48px serif";
-            var title = ctx.measureText("Average Temperature in the Bilt (NL) 2015");
-            ctx.fillText("Average Temperature in the Bilt (NL) 2015", (canvas.width-title.width)/2, 50);
-            ctx.beginPath();
-            // andere notatie voor temps(30), de temperatuur op de eerste dag x = 0
-            ctx.moveTo(100, yAxis(30));
-
-            for (var i = 0; i < data.length-1; i++)
-            {
-                data[i] = data[i].replace(/\s/g, "");
-                data[i] = data[i].split(';');
-                data[i][0] = new Date(data[i][0]);
-                data[i][1] = Number(data[i][1]);
-                x[i] = xAxis(data[i][0].getTime());
-                y[i] = yAxis(data[i][1]);
-                ctx.lineTo(x[i], y[i]);
-            }
-            ctx.stroke();
-
-            function createTransform(domain, range){
-                var alpha = (range[1] - range[0]) / (domain[1] - domain[0]);
-            	var beta = range[1] - (alpha * domain[1]);
-
-            	return function(x){
-            		return alpha * x + beta;
-            	};
-            }
-        </script>
+        <canvas id="graph"></canvas>
+        <script src="KNMI.js"></script>
     </body>
 </html>
