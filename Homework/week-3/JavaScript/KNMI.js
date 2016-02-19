@@ -38,7 +38,7 @@ ctx.stroke();
 
 // domains and ranges are given for graph axis
 var xAxis = createTransform([data[0][0], data[data.length - 2][0]],[100, canvas.width - 100]);
-var yAxis = createTransform([-50,300],[canvas.height - 100, 0]);
+var yAxis = createTransform([-50, 300],[canvas.height - 100, 0]);
 
 // label y-axis
 for (var i = -50; i < 300; i += 50)
@@ -67,7 +67,7 @@ for (var i = 0; i < 364; i++)
         ctx.translate(xAxis(data[i][0]) - 50, canvas.height - 25);
         // rotates text from base point
         ctx.rotate(-35 * Math.PI / 180);
-        // represent date as calander string and remove weekday
+        // represent date as calander string and remove weekday and year
         ctx.fillText(data[i][0].toDateString().slice(4, -4), 0, 0);
         ctx.restore();
     }
@@ -83,13 +83,52 @@ var y = [];
 for (var i = 0; i < data.length-1; i++)
 {
     // dates are transformed to x coordinates from miliseconds after 1 jan 1970 UTC
-    x[i] = xAxis(data[i][0].getTime());
+    x[i] = xAxis(data[i][0]);
     // temperatures are transformed to y coordinates
     y[i] = yAxis(data[i][1]);
     ctx.lineTo(x[i], y[i]);
 }
 // graph line is drawn
 ctx.stroke();
+
+// canvas for cross-hair is created
+//var canvas2 = document.getElementById("cross-hair");
+// canvas size is adjusted to browser window size
+//canvas2.width  = window.innerWidth;
+//canvas2.height = window.innerHeight;
+
+// contex for cross-hair is created
+// om een of andere reden worden er geen cross hair lijnen meer getekent
+// als ik die canvas2 invul i.p.v. canvas
+//var crh = canvas.getContext("2d");
+
+// domains and ranges are given for cross-hair
+//var xCross = createTransform([100, canvas.width - 100], [data[0][0], data[data.length - 2][0]]);
+//var yCross = createTransform([canvas.height - 100, 0], [-50, 300]);
+
+// er worden ook geen cross hair lijnen meer getekent als ik hier canvas2 invul
+//canvas.addEventListener("mousemove", function(event){
+    //crh.beginPath();
+    //if (event.clientY < canvas.height - 100 && event.clientY > 100)
+    //{
+        // from y-axis and datapoint height
+        // ik weet niet hoe ik via de event.clientX bij de Y waarde van de lijn moet komen
+        //crh.moveTo(100, event.clientY);
+        // to end graph on datapoint height
+        // hier geld hetzelfde
+        //crh.lineTo(canvas.width - 100, event.clientY);
+        //crh.stroke();
+    //}
+    //if (event.clientX > 100 && event.clientX < canvas.width - 100)
+    //{
+        // from x-axis and mouse width
+        //crh.moveTo(event.clientX, canvas.height - 100);
+        // to end graph on mouse width
+        //crh.lineTo(event.clientX, 100);
+    //}
+    //crh.stroke();
+    // ik weet niet waar of hoe ik in de code clearRect kan neer zetten om de oude lijn te wissen
+//});
 
 // transforms data points to pixel points on screen
 function createTransform(domain, range){
