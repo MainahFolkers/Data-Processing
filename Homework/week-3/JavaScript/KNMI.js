@@ -1,3 +1,6 @@
+// Name: Mainah
+// Student number: 10535845
+
 // data is loaded
 var data = document.getElementById("rawdata").innerHTML;
 // and split into lines
@@ -38,20 +41,29 @@ ctx.stroke();
 
 // domains and ranges are given for graph axis
 var xAxis = createTransform([data[0][0], data[data.length - 2][0]],[100, canvas.width - 100]);
-var yAxis = createTransform([-50, 300],[canvas.height - 100, 0]);
+var yAxis = createTransform([-50, 300],[canvas.height - 100, 100]);
 
 // label y-axis
-for (var i = -50; i < 300; i += 50)
+ctx.font = "24px serif";
+ctx.save();
+// sets base point for rotation
+ctx.translate(-430, canvas.height / 2);
+// rotates text from base point
+ctx.rotate(-90 * Math.PI / 180);
+ctx.fillText("Average temperature (Celsius)", 10, canvas.height / 2);
+ctx.restore();
+for (var i = -50; i <= 300; i += 50)
 {
     ctx.beginPath();
     ctx.moveTo(100, yAxis(i));
     ctx.lineTo(80, yAxis(i));
     ctx.stroke();
     // labels x-axis with temperature in Celsius degrees
-    ctx.fillText(i / 10, 10, yAxis(i) + 10);
+    ctx.fillText(i / 10, 50, yAxis(i) + 5);
 }
 
 // label x-axis
+ctx.fillText("Date in 2015", canvas.width / 2, canvas.height);
 for (var i = 0; i < 364; i++)
 {
     var date = data[i][0].getDate();
@@ -61,7 +73,6 @@ for (var i = 0; i < 364; i++)
         ctx.moveTo(xAxis(data[i][0]), canvas.height - 100);
         ctx.lineTo(xAxis(data[i][0]), canvas.height - 80);
         ctx.stroke();
-        ctx.font = "24px serif";
         ctx.save();
         // sets base point for rotation
         ctx.translate(xAxis(data[i][0]) - 50, canvas.height - 25);
