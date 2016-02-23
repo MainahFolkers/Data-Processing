@@ -1,0 +1,19 @@
+/* Name: Mainah
+   Student number: 10535845 */
+
+/* continent color */
+.continent
+{
+    fill: green;
+}
+
+/* country colors */
+#ita
+{
+    fill: red;
+}
+
+#swe
+{
+    fill: blue;
+}
