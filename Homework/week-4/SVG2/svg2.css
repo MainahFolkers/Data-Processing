@@ -1,10 +1,15 @@
 /* Name: Mainah
    Student number: 10535845 */
+html
+{
+    background-color: black;
+}
 
 #map_title
 {
     font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    text-align:center;
+    text-align: center;
+    color: white;
 }
 
 svg
@@ -17,8 +22,10 @@ svg
 #discussion
 {
     font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 18px;
     padding-right: 30px;
     padding-left: 30px;
+    color: white;
 }
 
 /*
