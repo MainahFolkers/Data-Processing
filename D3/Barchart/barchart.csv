@@ -1,2 +1,13 @@
-Groningen,Friesland,Drenthe,Overijssel,Flevoland,Gelderland,Utrecht,Noord-Holland,Zuid-Holland,Zeeland,Noord-Brabant,Limburg
-512,596,571,463,492,474,498,482,475,689,501,477
+province,value
+Groningen,512
+Friesland,596
+Drenthe,571
+Overijssel,463
+Flevoland,492
+Gelderland,474
+Utrecht,498
+Noord-Holland,482
+Zuid-Holland,475
+Zeeland,689
+Noord-Brabant,501
+Limburg,477
