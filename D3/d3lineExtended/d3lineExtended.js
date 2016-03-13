@@ -177,7 +177,7 @@ var drawGraph = function(csv) {
 
             g.append("text")
                 .attr("x", width - margin.right / 2)
-                .attr("y", i*25 + 20)
+                .attr("y", i * 25 + 20)
                 .text(legendLabels[i]);
         });
 
