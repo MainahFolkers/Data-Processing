@@ -69,6 +69,33 @@ var render = function(){
             .style("fill", "none")
             // listen for all pointer event on this rectangle
             .style("pointer-events", "all")
+
+        var legend = graph.append("g")
+        	.attr("class","legend")
+        	.attr("x", width - margin.right)
+        	.attr("y", margin.top)
+        	.attr("height", 100)
+        	.attr("width", 100);
+
+        var legendLabels = ["min temp", "avg temp", "max temp"];
+
+        legend.selectAll("g")
+            .data(legendLabels)
+            .enter().append("g")
+            .each(function(d,i){
+                var g = d3.select(this);
+                g.append("rect")
+                .attr("x", width - margin.right)
+                .attr("y", i*25 + 10)
+                .attr("width", 10)
+                .attr("height",10)
+                .style("fill", color(color.domain()));
+
+                g.append("text")
+                    .attr("x", width - margin.right)
+                    .attr("y", i*25 + 20)
+                    .text(function(d) { return d; });
+            });
 };
 
 // on click, update header and graph
