@@ -76,26 +76,6 @@ var render = function(){
         	.attr("y", margin.top)
         	.attr("height", 100)
         	.attr("width", 100);
-
-        var legendLabels = ["min temp", "avg temp", "max temp"];
-
-        legend.selectAll("g")
-            .data(legendLabels)
-            .enter().append("g")
-            .each(function(d,i){
-                var g = d3.select(this);
-                g.append("rect")
-                .attr("x", width - margin.right)
-                .attr("y", i*25 + 10)
-                .attr("width", 10)
-                .attr("height",10)
-                .style("fill", color(color.domain()));
-
-                g.append("text")
-                    .attr("x", width - margin.right)
-                    .attr("y", i*25 + 20)
-                    .text(function(d) { return d; });
-            });
 };
 
 // on click, update header and graph
@@ -159,82 +139,102 @@ var drawGraph = function(csv) {
             })
           ]);
 
-          var graph = d3.select("g");
-          var overlay = d3.select("g.overlay")
+    var graph = d3.select("g"),
+        overlay = d3.select("g.overlay"),
+        legend = d3.select(".legend"),
+        legendLabels = ["Avg.", "Min.", "Max."];
 
-        graph.select("g.x.axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis)
-            .append("text")
-            .attr("class", "axisTitle")
-            .attr("dy", margin.bottom)
-            .attr("dx", width / 2)
-            .text("Months");
+    graph.select("g.x.axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "axisTitle")
+        .attr("dy", margin.bottom)
+        .attr("dx", width / 2)
+        .text("Months");
 
-        graph.select("g.y.axis")
-            .call(yAxis)
-            .append("text")
-            .attr("class", "axisTitle")
-            .attr("transform", "rotate(-90)")
-            .attr("dy", -margin.left / 2)
-            .style("text-anchor", "end")
-            // temperature in degree Celsius with utf-8 degree character
-            .text("Temperature (\xB0C)");
+    graph.select("g.y.axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "axisTitle")
+        .attr("transform", "rotate(-90)")
+        .attr("dy", -margin.left / 2)
+        .style("text-anchor", "end")
+        // temperature in degree Celsius with utf-8 degree character
+        .text("Temperature (\xB0C)");
 
-        graph.selectAll(".temperature")
-            .data(temperatures)
-            .enter().append("path")
-            .attr("class", "line")
-            .attr("d", function(d) { return line(d.values); })
-            .style("stroke", function(d) { return color(d.line); });
+    legend.selectAll("g")
+        .data(temperatures)
+        .enter().append("g")
+        .each(function(d,i){
+            var g = d3.select(this);
+            g.append("rect")
+            .attr("x", width - margin.right)
+            .attr("y", i*25 + 10)
+            .attr("width", 10)
+            .attr("height",10)
+            .style("fill", color(d.line));
 
-        overlay.selectAll("circle")
-            .data(temperatures)
-            .enter().append("circle")
-            .attr("r", 3.5)
-            .attr("id", function(d) { return d.line});
+            g.append("text")
+                .attr("x", width - margin.right / 2)
+                .attr("y", i*25 + 20)
+                .text(legendLabels[i]);
+        });
 
-        // append interactive tooltip to overlay
-        var tooltip = d3.select("body").selectAll("div.tooltip")
-            .data(d3.keys(data[0]))
-            .enter().append("div")
-            .attr("class", "tooltip")
-            .attr("id", function(d) { return d});
+    graph.selectAll(".temperature")
+        .data(temperatures)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return line(d.values); })
+        .style("stroke", function(d) { return color(d.line); });
 
-        graph.select("rect")
-            // activates overlay and tooltips
-            .on("mouseover", function() {
-                overlay.style("display", null);
-                tooltip.style("display", null);
-            })
-            // deactivates overlay and tooltips
-            .on("mouseout", function() {
-                overlay.style("display", "none");
-                tooltip.style("display", "none");
-            })
-            // transfroms location of interactive dot to mouse x position and associated y value
-            .on("mousemove", function() {
-                // translates mouse x position to associated date
-                var xMouse = x.invert(d3.mouse(this)[0]),
-                    // returns index of date in data
-        		    index = bisectDate(data, xMouse);
+    overlay.selectAll("circle")
+        .data(temperatures)
+        .enter().append("circle")
+        .attr("r", 3.5)
+        .attr("id", function(d) { return d.line});
 
-                // adjusts position of dots to x and y value of associated data
-    		    overlay.selectAll("circle").attr("cx", x(xMouse));
-                overlay.select("#TG").attr("cy", y(data[index].TG));
-                overlay.select("#TN").attr("cy", y(data[index].TN));
-                overlay.select("#TX").attr("cy", y(data[index].TX));
+    // append interactive tooltip to overlay
+    var tooltip = d3.select("body").selectAll("div.tooltip")
+        .data(d3.keys(data[0]))
+        .enter().append("div")
+        .attr("class", "tooltip")
+        .attr("id", function(d) { return d});
 
-                // fill tooltips with values and position absolute on page
-                d3.selectAll("div.tooltip").style("left", (d3.event.pageX + 4) + "px");
-                d3.select("div#date").html(formatDate(data[index].date))
-                    .style("top", (height + 140) + "px");
-                d3.select("div#TG").html(data[index].TG + " \xB0C")
-                    .style("top", (y(data[index].TG) + 110) + "px");
-                d3.select("div#TN").html(data[index].TN + " \xB0C")
-                    .style("top", (y(data[index].TN) + 110) + "px");
-                d3.select("div#TX").html(data[index].TX + " \xB0C")
-                    .style("top", (y(data[index].TX) + 110) + "px");
-            })
+    graph.select("rect")
+        // activates overlay and tooltips
+        .on("mouseover", function() {
+            overlay.style("display", null);
+            tooltip.style("display", null);
+        })
+        // deactivates overlay and tooltips
+        .on("mouseout", function() {
+            overlay.style("display", "none");
+            tooltip.style("display", "none");
+        })
+        // transfroms location of interactive dot to mouse x position and associated y value
+        .on("mousemove", function() {
+            // translates mouse x position to associated date
+            var xMouse = x.invert(d3.mouse(this)[0]),
+                // returns index of date in data
+    		    index = bisectDate(data, xMouse);
+
+            // adjusts position of dots to x and y value of associated data
+		    overlay.selectAll("circle").attr("cx", x(xMouse));
+            overlay.select("#TG").attr("cy", y(data[index].TG));
+            overlay.select("#TN").attr("cy", y(data[index].TN));
+            overlay.select("#TX").attr("cy", y(data[index].TX));
+
+            // fill tooltips with values and position absolute on page
+            d3.selectAll("div.tooltip").style("left", (d3.event.pageX + 4) + "px");
+            d3.select("div#date").html(formatDate(data[index].date))
+                .style("top", (height + 140) + "px");
+            d3.select("div#TG").html(data[index].TG + " \xB0C")
+                .style("top", (y(data[index].TG) + 110) + "px");
+            d3.select("div#TN").html(data[index].TN + " \xB0C")
+                .style("top", (y(data[index].TN) + 110) + "px");
+            d3.select("div#TX").html(data[index].TX + " \xB0C")
+                .style("top", (y(data[index].TX) + 110) + "px");
+        })
     });
 };
