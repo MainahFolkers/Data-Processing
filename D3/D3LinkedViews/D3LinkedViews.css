@@ -1,0 +1,53 @@
+/* Name: Mainah Folkers
+   Student number: 10535845 */
+
+h1
+{
+    text-align:center;
+    color: white;
+}
+
+body,
+.chart
+{
+    padding-left: 30px;
+}
+
+#container,
+.chart
+{
+    float: left;
+}
+
+.datamaps-legend,
+p,
+a
+{
+    color: white;
+}
+
+.axis line,
+.axis path
+{
+    fill: none;
+    stroke: white;
+}
+
+.chart
+{
+    text-align: center;
+    text-anchor: middle;
+    font-size: 20px;
+    fill: white;
+}
+
+.chart rect:hover
+{
+        stroke: white;
+        stroke-width: 2;
+}
+
+p
+{
+    float: right;
+}
